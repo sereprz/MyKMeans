@@ -1,20 +1,35 @@
+import numpy as np
+from utils import sum_of_squares
+
+
 class MyKMean:
 
     def __init__(self, n_centers, seed=0):
-        self.n_centers = n_centers
         self.seed = seed
+        self.n_centers = n_centers
+        self.labels = None
+        self.centers = None
 
-    def fit(X):
-        # select k = n_centers of X as initial centres
-        centers = X[np.random.choice(len(X), n_centers)]
-        # allocate points to closest center
-        clusters = allocate_to_centers(X, centers)
-        # recalculate centers
-        new_centers = recalculate_centers(X, clusters)
-        # repeat until new centers = old centers
-
-    def allocate_to_centers(X, centers):
+    def allocate_to_centers(self, X):
+        n = X.shape[0]
+        clusters = np.empty(n)
+        for i, x_i in enumerate(X):
+            clusters[i] = np.argmin(
+                map(lambda x: sum_of_squares(x_i, x), self.centers)
+                )
         return clusters
 
-    def recalculate_centers(X, labels):
-        return new_centers
+    def recalculate_centers(self, X):
+        means = np.empty((self.n_centers, X.shape[1]))
+        for i in xrange(self.n_centers):
+            means[i] = np.mean(X[self.labels == i], axis=0)
+        return means
+
+    def fit(self, X):
+        self.centers = X[np.random.choice(len(X), self.n_centers)]
+        new_labels = self.allocate_to_centers(X)
+
+        while np.all(self.labels != new_labels):
+            self.labels = new_labels
+            self.centers = self.recalculate_centers(X)
+            new_labels = self.allocate_to_centers(X)
