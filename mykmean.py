@@ -2,7 +2,7 @@ import numpy as np
 from utils import sum_of_squares
 
 
-class MyKMean:
+class MyKMeans:
 
     def __init__(self, n_centers, seed=0):
         self.seed = seed
